@@ -1,0 +1,342 @@
+type VitalsError = 
+ variant {
+   deviceInactive;
+   deviceNotFound;
+   invalidReading;
+   invalidToken;
+   notAuthorized;
+ };
+type VitalSource = 
+ variant {
+   manual;
+   sensor;
+ };
+type Vital = 
+ record {
+   bloodSugar: opt float64;
+   bmi: opt float64;
+   createdAt: int;
+   diastolicBP: opt nat;
+   heartRate: opt nat;
+   id: nat;
+   patientId: principal;
+   recordedAt: int;
+   source: VitalSource;
+   spo2: opt nat;
+   systolicBP: opt nat;
+   temperature: opt float64;
+   weight: opt float64;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type User = 
+ record {
+   createdAt: int;
+   "principal": principal;
+   role: Role;
+ };
+type TimeRange = 
+ variant {
+   d30;
+   d7;
+   h24;
+   m3;
+   m6;
+   y1;
+ };
+type Role = 
+ variant {
+   doctor;
+   patient;
+ };
+type Result__1 = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type Result_5 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result_4 = 
+ variant {
+   err: VitalsError;
+   ok: opt Device;
+ };
+type Result_3 = 
+ variant {
+   err: VitalsError;
+   ok: opt Vital;
+ };
+type Result_2 = 
+ variant {
+   err: VitalsError;
+   ok: vec Vital;
+ };
+type Result_1 = 
+ variant {
+   err: VitalsError;
+   ok: Vital;
+ };
+type Result = 
+ variant {
+   err: VitalsError;
+   ok: Device;
+ };
+type PrescriptionStatus = 
+ variant {
+   active;
+   cancelled;
+   completed;
+ };
+type Prescription = 
+ record {
+   createdAt: int;
+   date: int;
+   doctorId: principal;
+   id: Id;
+   instructions: text;
+   medicines: vec Medicine;
+   patientId: principal;
+   status: PrescriptionStatus;
+ };
+type PatientProfile = 
+ record {
+   address: text;
+   age: nat;
+   bloodGroup: BloodGroup;
+   contact: text;
+   createdAt: int;
+   emergencyContact: opt text;
+   gender: Gender;
+   heightCm: opt float64;
+   name: text;
+   updatedAt: int;
+   userId: principal;
+   weightKg: opt float64;
+ };
+type NotificationKind = 
+ variant {
+   appointment;
+   consultation;
+   device;
+   medicalHistory;
+   prescription;
+   systemNotification;
+   vital;
+ };
+type NotificationId = nat;
+type Notification = 
+ record {
+   createdAt: int;
+   id: NotificationId;
+   isRead: bool;
+   kind: NotificationKind;
+   message: text;
+   title: text;
+   userId: principal;
+ };
+type Medicine = 
+ record {
+   dosage: text;
+   duration: text;
+   frequency: text;
+   id: Id;
+   name: text;
+ };
+type MedicalHistory = 
+ record {
+   condition: text;
+   createdBy: principal;
+   date: int;
+   diagnosis: text;
+   id: Id;
+   notes: text;
+   patientId: principal;
+   treatment: text;
+ };
+type Id = nat;
+type Gender = 
+ variant {
+   female;
+   male;
+   other;
+ };
+type Error = 
+ variant {
+   AmbiguousAttribute: record {
+                         field: text;
+                         sources: vec text;
+                       };
+   FrontendOriginMismatch: record {
+                             expected: vec text;
+                             got: text;
+                           };
+   FrontendOriginsNotConfigured;
+   MalformedCandid;
+   MissingField: text;
+   MixedSsoSources: record {
+                      otherKeys: vec text;
+                      ssoKeys: vec text;
+                    };
+   NoAttributes;
+   Stale: record {ageNs: nat;};
+   UnknownNonce;
+   UntrustedSsoSource: record {domain: text;};
+ };
+type DoctorProfile = 
+ record {
+   bio: opt text;
+   contact: text;
+   createdAt: int;
+   email: opt text;
+   licenseNumber: text;
+   name: text;
+   specialization: text;
+   updatedAt: int;
+   userId: principal;
+ };
+type DoctorPatientAssignment = 
+ record {
+   assignedAt: int;
+   doctorId: principal;
+   id: Id;
+   patientId: principal;
+ };
+type DeviceStatus = 
+ variant {
+   active;
+   inactive;
+ };
+type Device = 
+ record {
+   createdAt: int;
+   deviceName: text;
+   deviceTokenHash: blob;
+   deviceType: text;
+   id: nat;
+   lastSeenAt: opt int;
+   patientId: principal;
+   status: DeviceStatus;
+ };
+type ConsultationStatus = 
+ variant {
+   closed;
+   open;
+ };
+type Consultation = 
+ record {
+   createdAt: int;
+   date: int;
+   diagnosis: text;
+   doctorId: principal;
+   id: Id;
+   notes: text;
+   patientId: principal;
+   reason: text;
+   status: ConsultationStatus;
+ };
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+type BloodGroup = 
+ variant {
+   aNegative;
+   aPositive;
+   abNegative;
+   abPositive;
+   bNegative;
+   bPositive;
+   notSpecified;
+   oNegative;
+   oPositive;
+ };
+type AppointmentStatus = 
+ variant {
+   cancelled;
+   completed;
+   scheduled;
+ };
+type Appointment = 
+ record {
+   createdAt: int;
+   date: int;
+   doctorId: principal;
+   id: Id;
+   notes: text;
+   patientId: principal;
+   reason: text;
+   status: AppointmentStatus;
+   time: text;
+ };
+service : {
+  _initialize_access_control: () -> ();
+  _internet_identity_sign_in_finish: () -> (Result_5);
+  _internet_identity_sign_in_start: () -> (blob);
+  addManualVital: (heartRate: opt nat, spo2: opt nat, temperature:
+   opt float64, systolicBP: opt nat, diastolicBP: opt nat, bloodSugar:
+   opt float64, weight: opt float64, bmi: opt float64, recordedAt: int) ->
+   (Result_1);
+  addMedicalHistory: (patientId: principal, condition: text, diagnosis: 
+   text, treatment: text, date: int, notes: text) -> (MedicalHistory);
+  assignCallerRole: (role: Role) -> (User);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  assignPatient: (patientId: principal) -> (DoctorPatientAssignment);
+  bookAppointment: (doctorId: principal, date: int, time: text, reason: 
+   text, notes: text) -> (Appointment);
+  cancelAppointment: (id: Id) -> (bool);
+  createConsultation: (patientId: principal, date: int, reason: text,
+   diagnosis: text, notes: text) -> (Consultation);
+  createNotification: (userId: principal, title: text, message: text, kind:
+   NotificationKind) -> (Notification);
+  createPrescription: (patientId: principal, medicines: vec Medicine,
+   instructions: text, date: int) -> (Prescription);
+  execute: (qJson: text) -> (Result__1) query;
+  getApiDoc: () -> (text) query;
+  getCallerDoctorProfile: () -> (opt DoctorProfile) query;
+  getCallerPatientProfile: () -> (opt PatientProfile) query;
+  getCallerRole: () -> (opt Role) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getConsultation: (id: Id) -> (opt Consultation) query;
+  getDeviceStatus: (patientId: principal) -> (Result_4) query;
+  getLatestVitals: (patientId: principal) -> (Result_3) query;
+  getMedicalHistory: (id: Id) -> (opt MedicalHistory) query;
+  getPrescription: (id: Id) -> (opt Prescription) query;
+  getVitalsHistory: (patientId: principal, range: TimeRange) ->
+   (Result_2) query;
+  ingestVitals: (deviceToken: blob, heartRate: opt nat, spo2: opt nat,
+   temperature: opt float64, recordedAt: int) -> (Result_1);
+  isCallerAdmin: () -> (bool) query;
+  listAppointments: (patientId: principal) -> (vec Appointment) query;
+  listAssignedPatients: (doctorId: principal) ->
+   (vec DoctorPatientAssignment) query;
+  listConsultations: (patientId: principal) -> (vec Consultation) query;
+  listMedicalHistory: (patientId: principal) -> (vec MedicalHistory) query;
+  listMyNotifications: () -> (vec Notification) query;
+  listPrescriptions: (patientId: principal) -> (vec Prescription) query;
+  manageAppointment: (id: Id, status: AppointmentStatus) -> (bool);
+  markAllNotificationsRead: () -> ();
+  markNotificationAsRead: (notificationId: NotificationId) -> (bool);
+  registerDevice: (deviceName: text, deviceType: text, deviceToken: blob) ->
+   (Result);
+  saveCallerDoctorProfile: (profile: DoctorProfile) -> (DoctorProfile);
+  saveCallerPatientProfile: (profile: PatientProfile) -> (PatientProfile);
+  schema: () -> (text) query;
+  unreadNotificationCount: () -> (nat) query;
+}

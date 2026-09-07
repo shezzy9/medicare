@@ -1,0 +1,21 @@
+{
+  "overview": "A full-stack healthcare management system connecting patients and doctors with real-time vitals monitoring, medical records, consultations, prescriptions, and appointments.",
+  "features": [
+    "Patient dashboard with live vitals monitoring",
+    "Vitals history with charts and time-range filters",
+    "Medical history, consultations, and prescriptions",
+    "Appointment booking and management",
+    "Doctor portal for managing assigned patients",
+    "ESP32 device data ingestion for heart rate, SpO2, and temperature",
+    "Secure role-based access for patients and doctors"
+  ],
+  "category": "healthcare",
+  "tags": [
+    "healthcare",
+    "medical",
+    "patient",
+    "doctor",
+    "vitals"
+  ],
+  "last_updated": "2026-09-07T14:14:51.970Z"
+}
